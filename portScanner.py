@@ -20,7 +20,7 @@ def get_user_defined_ips(argument):
         for x in argument.split(','):
             if '/' in x:
                 for y in ipaddress.IPv4Network(x, strict=False):
-                    destination_list.append(y)
+                    destination_list.append(str(y))
             elif '-' in x:
                 for y in find_hyphen_ip_addresses(x):
                     destination_list.append(y)
@@ -130,9 +130,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-d','--destination', type=str, help='Specify target destinations (IP addresses) for scan')
 parser.add_argument('-p', '--port', type=str, help='Specify ports to scan')
 parser.add_argument('-hf', '--hostFile', type=str, help='Pass in file of hosts to scan')
-parser.add_argument('-t','--tcp', action='store_true', help='Specify if UDP is preferred (TCP is default)')
-parser.add_argument('-u','--udp', action='store_true', help='Specify if UDP is preferred (TCP is default)')
-parser.add_argument('-i','--icmp', action='store_true', help='Specify if ICMP is preferred (TCP is default)')
+parser.add_argument('-t','--tcp', action='store_true', help='Specify to perform TCP scan on targets')
+parser.add_argument('-u','--udp', action='store_true', help='Specify to perform UDP scan on targets')
+parser.add_argument('-i','--icmp', action='store_true', help='Specify to perform ICMP scan on targets')
 args = parser.parse_args()
 #helpful link, introduced me to argparse https://stackoverflow.com/questions/32286403/how-to-implement-command-line-switches-to-my-script
 
@@ -148,14 +148,17 @@ if args.destination:
 if args.hostFile:
     print("hosts file being read...")
     with open(args.hostFile, 'r') as file:
-        userDefinedHosts = userDefinedHosts + "," + file.read().replace(" ","")
+        if not userDefinedHosts == "":
+            userDefinedHosts = userDefinedHosts + "," + file.read().replace(" ","")
+        else:
+            userDefinedHosts = file.read().replace(" ","")
 userDefinedHosts =''.join(userDefinedHosts.split())
 if "," in userDefinedHosts:
     for addr in get_user_defined_ips(userDefinedHosts):
         allHostsToScan.add(addr)
 elif "/" in userDefinedHosts:
     for addr in ipaddress.IPv4Network(userDefinedHosts, strict=False):
-        allHostsToScan.add(addr)
+        allHostsToScan.add(str(addr))
 elif "-" in userDefinedHosts:
     for addr in find_hyphen_ip_addresses(userDefinedHosts):
         allHostsToScan.add(addr)

@@ -28,10 +28,13 @@ Port scanner is called from the terminal, and accepts commandline arguments thro
 Example commands: 
 
 portScanner.py -d 192.168.100.44 -p 80,443,8080 -t -u
+
 Scan TCP and UDP ports 80,443, and 8080 for host 192.168.100.44.
 
 portScanner.py -d 192.168.100.3/24 -p 8080-10000 -t -i
+
 Scan hosts in the 192.168.100.0/24 subnet (.0 on the last quartet is not strictly enforced) on all ports from 8080-10000 for listening TCP ports (not recommended, would be extremely time-consuming) and ping all these hosts with ICMP packets. 
 
 portScanner.py -hf hosts.txt -u -p 22,2000,3030
+
 Scan all hosts listed in the file hosts.txt for listening UDP ports on 22, 2000, and 3030. 
